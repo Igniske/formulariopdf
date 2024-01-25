@@ -35,17 +35,18 @@
         return;
       }
 
-      // Establecer el título como el nombre del archivo sin la extensión
-      const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, ''); // Eliminar la extensión
-
-      const formData = new FormData(form);
-      formData.set('title', fileNameWithoutExtension);
+      const formData = new FormData();
+      formData.append('pdfFile', file);
 
       try {
         const response = await fetch(form.action, {
           method: 'POST',
           body: formData,
         });
+
+        if (!response.ok) {
+          throw new Error(`Error al cargar el PDF: ${response.statusText}`);
+        }
 
         const result = await response.json();
 
@@ -55,7 +56,8 @@
           alert('Error al cargar el PDF.');
         }
       } catch (error) {
-        console.error('Error de red:', error);
+        console.error('Error de red:', error.message);
+        alert('Hubo un error al enviar el formulario.');
       }
     });
   </script>
